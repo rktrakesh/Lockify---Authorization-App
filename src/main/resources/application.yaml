@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: authentication-backend
+  banner:
+    location: classpath:banner.txt

@@ -1,0 +1,46 @@
+#DEV
+server:
+  port: 2020
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/authentication_app
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          # /login/oauth2/code/google
+            google:
+                client-id: ${GOOGLE_CLIENT_ID}
+                client-secret: ${GOOGLE_CLIENT_SECRET}
+                scope:
+                    - email
+                    - profile
+                    - openid
+          # /login/oauth2/code/github
+            github:
+                client-id: ${GITHUB_CLIENT_ID}
+                client-secret: ${GITHUB_CLIENT_SECRET}
+                scope:
+                    - read:user
+                    - user:email
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: ${JWT_ISSUER}
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS}
+    refresh-token-cookie-name: ${JWT_REFRESH_TOKEN_COOKIE_NAME}
+    cookie-secure: ${JWT_COOKIE_SECURE}
+    cookie-http-only: ${JWT_COOKIE_HTTP_ONLY}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE}
+    cookie-domain: ${JWT_COOKIE_DOMAIN}
+    cookie-path: ${JWT_COOKIE_PATH}
+
