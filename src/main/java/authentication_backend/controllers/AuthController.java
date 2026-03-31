@@ -1,9 +1,7 @@
 package authentication_backend.controllers;
 
-import authentication_backend.dto.LoginRequest;
-import authentication_backend.dto.RefreshTokenRequest;
-import authentication_backend.dto.TokenResponse;
-import authentication_backend.dto.UserDto;
+import authentication_backend.dto.*;
+import authentication_backend.entity.Provider;
 import authentication_backend.entity.RefreshToken;
 import authentication_backend.entity.User;
 import authentication_backend.repo.RefreshTokenRepository;
@@ -50,12 +48,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login (@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        Authentication authenticate = authenticate(loginRequest);
+    public ResponseEntity<?> login (@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
         if (!user.isEnable()) {
             throw new DisabledException("User account is disabled");
         }
+
+        if (user.getProvider() != null && !user.getProvider().equals(Provider.LOCAL)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(
+                            "This account was created using " + user.getProvider() +
+                                    ". Please login using " + user.getProvider()
+                            , HttpStatus.UNAUTHORIZED
+                    ));
+        }
+
+        Authentication authenticate = authenticate(loginRequest);
 
         // generating refresh token
         String jti = UUID.randomUUID().toString();

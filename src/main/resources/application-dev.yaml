@@ -44,3 +44,8 @@ security:
     cookie-domain: ${JWT_COOKIE_DOMAIN}
     cookie-path: ${JWT_COOKIE_PATH}
 
+app:
+  auth:
+    frontend:
+      success-redirect-url: ${APP_AUTH_FRONTEND_SUCCESS_REDIRECT_URL}
+      failure-redirect-url: ${APP_AUTH_FRONTEND_FAILURE_REDIRECT_URL}
