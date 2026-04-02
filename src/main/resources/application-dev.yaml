@@ -45,6 +45,8 @@ security:
     cookie-path: ${JWT_COOKIE_PATH}
 
 app:
+  cors:
+    frontend-url: ${APP_CORS_FRONTEND_URL}
   auth:
     frontend:
       success-redirect-url: ${APP_AUTH_FRONTEND_SUCCESS_REDIRECT_URL}
