@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<AuthenticationError> handleBadCredentialsException (Exception exception, HttpServletRequest request) {
         logger.info("GlobalExceptionHandler :: Handling authentication exception: {}", exception.getClass().getSimpleName());
         AuthenticationError error = new AuthenticationError(
-                "Exception while JWT authorization -- " + exception.getMessage(),
+                exception.getMessage(),
                 "Bad credentials",
                 request.getRequestURI(),
                 OffsetDateTime.now()
