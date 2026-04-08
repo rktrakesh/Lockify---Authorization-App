@@ -96,8 +96,10 @@ public class UserServiceImpl implements UserService {
             user.setPassword(userDto.getPassword());
             logger.debug("USER_015_UPDATE_PASSWORD_FIELD: User password field updated");
         }
-        user.setEnable(userDto.isEnable());
-        logger.debug("USER_016_UPDATE_ENABLE_FIELD: User enable status updated to: {}", userDto.isEnable());
+        if (userDto.getEnable() != null) {
+            user.setEnable(userDto.getEnable());
+            logger.debug("USER_016_UPDATE_ENABLE_FIELD: User enable status updated to: {}", userDto.getEnable());
+        }
 
         User newUser = userRepo.save(user);
         

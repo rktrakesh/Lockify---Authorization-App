@@ -56,12 +56,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        logger.info("CTRL_003_LOGIN_REQUEST: Login endpoint called - email: {}", maskEmail(loginRequest.getEmail()));
-
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> {
             logger.warn("CTRL_004_LOGIN_USER_NOT_FOUND: User not found during login - email: {}", maskEmail(loginRequest.getEmail()));
             return new BadCredentialsException("Invalid email or password");
         });
+
+        logger.info("CTRL_003_LOGIN_REQUEST: Login endpoint called - email: {}", maskEmail(loginRequest.getEmail()));
         
         if (!user.isEnable()) {
             logger.warn("CTRL_005_LOGIN_USER_DISABLED: Login attempt for disabled account - userId: {}", user.getId());

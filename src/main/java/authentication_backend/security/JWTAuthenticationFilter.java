@@ -101,15 +101,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 logger.warn("FILTER_019_TOKEN_SIGNATURE_INVALID: JWT token signature is invalid - error: {}", e.getMessage());
                 request.setAttribute("error", "Invalid token");
             } catch (Exception e) {
-                logger.error("FILTER_020_TOKEN_PROCESSING_ERROR: Unexpected error processing JWT token - error: {}", e.getMessage());
+                logger.error("FILTER_020_TOKEN_PROCESSING_ERROR: Unexpected error processing JWT token - error: {}", e.getMessage(), e);
                 request.setAttribute("error", "Invalid token");
             }
         } else {
-            logger.debug("FILTER_021_NO_BEARER_TOKEN: No Bearer token found in Authorization header");
+            logger.warn("FILTER_021_NO_BEARER_TOKEN: No Bearer token found in Authorization header for request: {}", request.getRequestURI());
         }
         
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            logger.debug("FILTER_022_NO_AUTH_SET: No authentication set for request: {}", request.getRequestURI());
+            logger.warn("FILTER_022_NO_AUTH_SET: No authentication set for request: {}", request.getRequestURI());
         } else {
             logger.debug("FILTER_023_AUTH_SET: Authentication successfully set for request: {}", request.getRequestURI());
         }

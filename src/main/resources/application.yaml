@@ -3,3 +3,13 @@ spring:
     name: authentication-backend
   banner:
     location: classpath:banner.txt
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: false
+
+logging:
+  level:
+    root: INFO
+    authentication_backend: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

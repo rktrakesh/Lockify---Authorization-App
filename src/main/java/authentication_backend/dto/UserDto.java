@@ -1,8 +1,6 @@
 package authentication_backend.dto;
 
 import authentication_backend.entity.Provider;
-import authentication_backend.entity.Role;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
@@ -22,7 +20,7 @@ public class UserDto {
     private String email;
     private String password;
     private String image;
-    private boolean enable = true;
+    private Boolean enable = true;
     private Instant createdAt = Instant.now();
     private  Instant updatedAt = Instant.now();
     private Set<RoleDto> roles = new HashSet<>();
