@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,18 +30,19 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public PasswordEncoder passwordEncoder () {
-        return new BCryptPasswordEncoder() ;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration){
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) {
         return configuration.getAuthenticationManager();
     }
 
@@ -51,6 +54,8 @@ public class SecurityConfig {
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(UrlConstant.PUBLIC_URL).permitAll()
+                        .requestMatchers(HttpMethod.GET).hasRole(AppConstrants.GUEST_ROLE)
+                        .requestMatchers("/api/v1.0/users/**").hasRole(AppConstrants.ADMIN_ROLE)
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(
@@ -58,12 +63,20 @@ public class SecurityConfig {
                                 .successHandler(oAuth2SuccessHandler)
                                 .failureHandler(null)
                 )
-                .exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) -> {
-                    response.setContentType("application/json");
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    String message = (String) request.getAttribute("error");
-                    response.getOutputStream().println("{ \"error\": \"" + (message != null ? message : authException.getMessage()) + "\", \"status\": " + HttpServletResponse.SC_UNAUTHORIZED + " }");
-                }))
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint((request, response, authException) -> {
+                                    response.setContentType("application/json");
+                                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    String message = (String) request.getAttribute("error");
+                                    response.getOutputStream().println("{ \"error\": \"" + (message != null ? message : authException.getMessage()) + "\", \"status\": " + HttpServletResponse.SC_UNAUTHORIZED + " }");
+                                })
+                                .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.setContentType("application/json");
+                                    String message = (String) request.getAttribute("error");
+                                    response.getOutputStream().println("{ \"error\": \"" + (message != null ? message : accessDeniedException.getMessage()) + "\", \"status\": " + HttpServletResponse.SC_FORBIDDEN + " }");
+                                }))
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

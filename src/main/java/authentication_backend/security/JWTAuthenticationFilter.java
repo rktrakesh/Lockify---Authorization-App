@@ -73,7 +73,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     .stream()
                                     .map(role -> {
                                         logger.debug("FILTER_012_ROLE_MAPPING: Mapping role - roleName: {}", role.getName());
-                                        return new SimpleGrantedAuthority("ROLE_" + role.getName());
+                                        return new SimpleGrantedAuthority(role.getName());
                                     })
                                     .collect(Collectors.toList());
                             

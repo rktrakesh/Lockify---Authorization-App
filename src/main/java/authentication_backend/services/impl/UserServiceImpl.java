@@ -1,10 +1,13 @@
 package authentication_backend.services.impl;
 
+import authentication_backend.config.AppConstrants;
 import authentication_backend.dto.UserDto;
 import authentication_backend.entity.Provider;
+import authentication_backend.entity.Role;
 import authentication_backend.entity.User;
 import authentication_backend.exception.ResourceNotFoundException;
 import authentication_backend.helper.UserHelper;
+import authentication_backend.repo.RoleRepository;
 import authentication_backend.repo.UserRepository;
 import authentication_backend.services.UserService;
 import jakarta.transaction.Transactional;
@@ -14,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 @Service
@@ -24,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
     private final ModelMapper mapper;
+    private final RoleRepository roleRepository;
 
     @Override
     @Transactional
@@ -40,7 +45,13 @@ public class UserServiceImpl implements UserService {
         user.setProvider(userDto.getProvider() != null ? userDto.getProvider() : Provider.LOCAL);
         
         logger.debug("USER_003_USER_ENTITY_MAPPED: User entity mapped successfully - provider: {}", user.getProvider());
-        
+
+        Role role = roleRepository.findByName("ROLE_" + AppConstrants.GUEST_ROLE).orElse(null);
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        }
+        user.getRoles().add(role);
+
         User savedUser = userRepo.save(user);
 
         logger.info("USER_004_CREATE_NEW_USER_SUCCESS: User created successfully - userId: {}, provider: {}", savedUser.getId(), savedUser.getProvider());
