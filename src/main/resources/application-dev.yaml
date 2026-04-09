@@ -30,6 +30,9 @@ spring:
                 scope:
                     - read:user
                     - user:email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account
 
 security:
   jwt:
@@ -45,6 +48,8 @@ security:
     cookie-path: ${JWT_COOKIE_PATH}
 
 app:
+  cors:
+    frontend-url: ${APP_CORS_FRONTEND_URL}
   auth:
     frontend:
       success-redirect-url: ${APP_AUTH_FRONTEND_SUCCESS_REDIRECT_URL}
