@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public  ResponseEntity<Iterable<UserDto>> getAllUsers () {
         logger.info("USER_CTRL_003_GET_ALL_USERS_REQUEST: Get all users endpoint called");
