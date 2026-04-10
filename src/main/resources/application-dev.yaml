@@ -32,7 +32,7 @@ spring:
                     - user:email
         provider:
           google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?prompt=select_account
+            authorization-uri: ${GOOGLE_AUTHORIZATION_URI}
 
 security:
   jwt:
